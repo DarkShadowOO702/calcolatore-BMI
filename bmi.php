@@ -13,29 +13,53 @@ $nomeValido = ($nome != "");
 $pesoValido = (is_numeric($peso) && $peso > 0);
 $altezzaValido = (is_numeric($altezza) && $altezza > 0);
 
-if(!$nomeValido || !$peoValido || !$altezzaValido){
-    exit("Errore! Inserisci dei dati validi...");
-}
-
 // Converte l'altezza da centimetri a metri
 $altezza = $altezza / 100;
 
-// Calcola il BMI
-$bmi = $peso / ($altezza * $altezza);
+// Registrazione dei dati non validi
+$nomeLog = "NOT_VALID";
+$pesoLog = "NOT_VALID";
+$altezzaLog = "NOT_VALID";
 
-// Controlla in quale fascia rientra il BMI
-if ($bmi < 18.5) {
-    $fascia = "SOTTOPESO";
-    $classe = "sottopeso";
-} else if ($bmi < 25) {
-    $fascia = "NORMOPESO";
-    $classe = "normopeso";
-} else if ($bmi < 30) {
-    $fascia = "SOVRAPPESO";
-    $classe = "sovrappeso";
-} else {
-    $fascia = "OBESITÀ";
-    $classe = "obesita";
+$bmiLog = "NOT_VALID";
+$classeLog = "NOT_VALID";
+
+if ($nomeValido) {
+    $nomeLog = $nome;
+}
+
+if ($pesoValido) {
+    $pesoLog = $peso;
+}
+
+if ($altezzaValida) {
+    $altezzaLog = $altezza;
+}
+
+// Calcola il BMI
+if ($pesoValido && $altezzaValida) {
+
+    $altezza = $altezza / 100;
+
+    $bmi = $peso / ($altezza * $altezza);
+    $bmi = round($bmi, 2);
+
+    if ($bmi < 18.5) {
+        $fascia = "SOTTOPESO";
+        $classe = "sottopeso";
+    } else if ($bmi < 25) {
+        $fascia = "NORMOPESO";
+        $classe = "normopeso";
+    } else if ($bmi < 30) {
+        $fascia = "SOVRAPPESO";
+        $classe = "sovrappeso";
+    } else {
+        $fascia = "OBESITÀ";
+        $classe = "obesita";
+    }
+
+    $bmiLog = $bmi;
+    $classeLog = $classe;
 }
 
 // Arrotonda il BMI a due cifre decimali
@@ -50,16 +74,23 @@ $riga = array(
     $data,
     $ora,
     $ip,
-    $nome,
-    $altezza * 100,
-    $peso,
-    $bmi,
-    $classe
+    $nomeLog,
+    $altezzaLog,
+    $pesoLog,
+    $bmiLog,
+    $classeLog
 );
 
 $file = fopen("log.csv", "a");
-fputcsv($file, $riga);
-fclose($file);
+
+if ($file != false) {
+    fputcsv($file, $riga);
+    fclose($file);
+}
+
+if (!$nomeValido || !$pesoValido || !$altezzaValida) {
+    exit("Errore: inserisci dei dati validi!");
+}
 ?>
 
 <!DOCTYPE html>
