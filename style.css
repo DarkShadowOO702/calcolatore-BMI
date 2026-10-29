@@ -1,26 +1,17 @@
-/* Fa comprendere padding e bordo nella larghezza totale */
+/* Include padding e bordo nella larghezza totale */
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-
-    /* Fa sì che la pagina sia alta almeno quanto lo schermo */
     min-height: 100vh;
+    padding: 40px 24px;
 
-    padding: 40px 60px;
-
-    /* Attiva Flexbox, cioè un sistema che permette di disporre gli elementi in modo ordinato. */
+    /* Disposizione verticale e centratura */
     display: flex;
-
-    /* Mette gli elementi uno sotto l'altro, in colonna */
     flex-direction: column;
-
-    /* Centra gli elementi lungo la direzione principale */
     justify-content: center;
-
-    /* Centra gli elementi lungo la direzione opposta */
     align-items: center;
 
     font-family: Arial, sans-serif;
@@ -36,28 +27,22 @@ h1 {
 
 .card {
     width: 360px;
-
-    /* Impedisce alla card di superare la larghezza del contenitore */
     max-width: 100%;
-
     padding: 24px;
+
     background: #FFFFFF;
-
-    /* Arrotonda gli angoli della card */
     border-radius: 12px;
-
-    /* Aggiunge un'ombra leggera alla card */
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* Form */
 form {
     display: flex;
     flex-direction: column;
-
-    /* Crea spazio tra i campi del form */
     gap: 16px;
 }
 
+/* Campi del form */
 .campo {
     display: flex;
     flex-direction: column;
@@ -71,25 +56,25 @@ label {
 input {
     width: 100%;
     padding: 12px;
+
     border: 1px solid #D0D7DE;
     border-radius: 6px;
 
-    /* Usa lo stesso font dell'elemento contenitore */
     font: inherit;
 }
 
+/* Pulsante Calcola */
 button {
     width: 100%;
     padding: 12px;
+
     border: none;
     border-radius: 8px;
+
     background: #1F2328;
-    color: #F1F3F5;
+    color: #FFFFFF;
 
-    /* Usa lo stesso font dell'elemento contenitore */
     font: inherit;
-
-    /* Mostra una mano quando si passa sul pulsante */
     cursor: pointer;
 }
 
@@ -97,6 +82,7 @@ button:hover {
     background: #343A40;
 }
 
+/* Risultato BMI */
 .risultato {
     text-align: center;
 }
@@ -106,21 +92,23 @@ button:hover {
 }
 
 .bmi-numero {
-    font-size: 48px;
-
-    /* Rende il testo più spesso */
-    font-weight: bold;
-
     margin: 16px 0;
+
+    font-size: 48px;
+    font-weight: bold;
 }
 
+/* Fascia del BMI */
 .fascia {
     padding: 10px;
+
     border-radius: 6px;
+
     font-weight: bold;
+    text-transform: uppercase;
 }
 
-/* Stile della fascia sottopeso */
+/* Sottopeso */
 .sottopeso {
     background: #E3EEF9;
     border: 3px solid #2F6FB3;
@@ -130,7 +118,7 @@ button:hover {
     color: #2F6FB3;
 }
 
-/* Stile della fascia normopeso */
+/* Normopeso */
 .normopeso {
     background: #E3F4E6;
     border: 3px solid #256D34;
@@ -140,7 +128,7 @@ button:hover {
     color: #256D34;
 }
 
-/* Stile della fascia sovrappeso */
+/* Sovrappeso */
 .sovrappeso {
     background: #FCEBD7;
     border: 3px solid #9A4F06;
@@ -150,7 +138,7 @@ button:hover {
     color: #9A4F06;
 }
 
-/* Stile della fascia obesità */
+/* Obesità */
 .obesita {
     background: #FBE2E2;
     border: 3px solid #B32D2D;
@@ -160,19 +148,34 @@ button:hover {
     color: #B32D2D;
 }
 
+/* Link Calcola di nuovo */
 .link-nuovo {
     display: inline-block;
     margin-top: 20px;
+
     color: #1F2328;
+    text-decoration: underline;
 }
 
-/* Applica queste regole agli schermi larghi al massimo 480px */
+.link-nuovo:hover {
+    color: #343A40;
+}
+
+/* Adattamento agli schermi piccoli */
 @media (max-width: 480px) {
     body {
-        padding: 24px;
+        padding: 24px 16px;
     }
 
     h1 {
         font-size: 28px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .bmi-numero {
+        font-size: 40px;
     }
 }
