@@ -5,17 +5,42 @@ $altezza = "";
 $bmi = null;
 $fascia = "";
 $classe = "";
-$errore = "";
 $calcolato = false;
+
+// Array per contenere i messaggi di errore specifici per ogni campo
+$errori = [
+    'nome' => '',
+    'peso' => '',
+    'altezza' => ''
+];
 
 // Gestione dell'invio del form via POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Recupero e pulizia dei dati
     $nome = isset($_POST["nome"]) ? trim($_POST["nome"]) : "";
-    $peso = isset($_POST["peso"]) ? filter_var($_POST["peso"], FILTER_VALIDATE_FLOAT) : false;
-    $altezza = isset($_POST["altezza"]) ? filter_var($_POST["altezza"], FILTER_VALIDATE_FLOAT) : false;
+    $pesoInput = isset($_POST["peso"]) ? trim($_POST["peso"]) : "";
+    $altezzaInput = isset($_POST["altezza"]) ? trim($_POST["altezza"]) : "";
 
-    // Validazione dei dati
-    if (!empty($nome) && $peso !== false && $peso > 0 && $altezza !== false && $altezza > 0) {
+    $peso = filter_var($pesoInput, FILTER_VALIDATE_FLOAT);
+    $altezza = filter_var($altezzaInput, FILTER_VALIDATE_FLOAT);
+
+    // Validazione campo Nome
+    if (empty($nome)) {
+        $errori['nome'] = "Inserisci il tuo nome";
+    }
+
+    // Validazione campo Peso
+    if ($peso === false || $peso <= 0) {
+        $errori['peso'] = "Valore non valido";
+    }
+
+    // Validazione campo Altezza
+    if ($altezza === false || $altezza <= 0) {
+        $errori['altezza'] = "Valore non valido";
+    }
+
+    // Se non ci sono errori in nessun campo, procediamo con il calcolo
+    if (empty($errori['nome']) && empty($errori['peso']) && empty($errori['altezza'])) {
         $altezzaMetri = $altezza / 100;
         $bmi = $peso / ($altezzaMetri * $altezzaMetri);
         $bmi = round($bmi, 2);
@@ -36,7 +61,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         $calcolato = true;
     } else {
-        $errore = "Errore: inserisci dei dati validi per tutti i campi!";
+        // Ripristiniamo i valori per ripopolare i campi del form
+        $peso = $pesoInput;
+        $altezza = $altezzaInput;
     }
 }
 ?>
@@ -88,11 +115,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         .campo {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         label {
             display: block;
+            font-weight: bold;
+            font-size: 14px;
         }
 
         input {
@@ -101,6 +130,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             border: 1px solid #D0D7DE;
             border-radius: 6px;
             font: inherit;
+        }
+
+        /* Stile per input con errore */
+        input.input-errore {
+            border-color: #B32D2D;
+            background-color: #FFF5F5;
+        }
+
+        /* Messaggio d'errore sotto il campo */
+        .messaggio-errore {
+            color: #B32D2D;
+            font-size: 12px;
+            margin-top: 2px;
         }
 
         button {
@@ -112,21 +154,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color: #FFFFFF;
             font: inherit;
             cursor: pointer;
+            margin-top: 8px;
         }
 
         button:hover {
             background: #343A40;
-        }
-
-        .errore {
-            background: #FBE2E2;
-            border: 1px solid #B32D2D;
-            color: #B32D2D;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            text-align: center;
-            font-size: 14px;
         }
 
         .risultato {
@@ -229,32 +261,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <a class="link-nuovo" href="index.php">Calcola di nuovo</a>
     <?php else: ?>
         <div class="card">
-            <?php if (!empty($errore)): ?>
-                <div class="errore"><?php echo htmlspecialchars($errore, ENT_QUOTES, "UTF-8"); ?></div>
-            <?php endif; ?>
-
-            <form action="index.php" method="post">
+            <form action="index.php" method="post" novalidate>
                 <div class="campo">
                     <label for="nome">Nome</label>
                     <input type="text" id="nome" name="nome"
+                           class="<?php echo !empty($errori['nome']) ? 'input-errore' : ''; ?>"
                            value="<?php echo htmlspecialchars($nome, ENT_QUOTES, "UTF-8"); ?>"
-                           placeholder="Inserisci il tuo nome" required>
+                           placeholder="Inserisci il tuo nome">
+                    <?php if (!empty($errori['nome'])): ?>
+                        <span class="messaggio-errore"><?php echo $errori['nome']; ?></span>
+                    <?php endif; ?>
                 </div>
 
                 <div class="campo">
                     <label for="peso">Peso in kg</label>
                     <input type="number" id="peso" name="peso"
+                           class="<?php echo !empty($errori['peso']) ? 'input-errore' : ''; ?>"
                            value="<?php echo htmlspecialchars($peso, ENT_QUOTES, "UTF-8"); ?>"
                            placeholder="Inserisci il tuo peso"
-                           min="0.1" step="any" required>
+                           step="any">
+                    <?php if (!empty($errori['peso'])): ?>
+                        <span class="messaggio-errore"><?php echo $errori['peso']; ?></span>
+                    <?php endif; ?>
                 </div>
 
                 <div class="campo">
                     <label for="altezza">Altezza in cm</label>
                     <input type="number" id="altezza" name="altezza"
+                           class="<?php echo !empty($errori['altezza']) ? 'input-errore' : ''; ?>"
                            value="<?php echo htmlspecialchars($altezza, ENT_QUOTES, "UTF-8"); ?>"
                            placeholder="Inserisci la tua altezza"
-                           min="1" step="any" required>
+                           step="any">
+                    <?php if (!empty($errori['altezza'])): ?>
+                        <span class="messaggio-errore"><?php echo $errori['altezza']; ?></span>
+                    <?php endif; ?>
                 </div>
 
                 <button type="submit">Calcola</button>
